@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sin conexión · Biblioteca Virtual UTP</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Ir al contenido principal</a>
+  <header class="cabecera" id="cabecera"></header>
+  <main id="contenido" tabindex="-1">
+    <section class="tarjeta tarjeta--grande centrada" aria-labelledby="titulo">
+      <div class="insignia insignia--info" id="icono"></div>
+      <h1 id="titulo" style="font-size:1.75rem">Sin conexión a internet</h1>
+      <p class="suave">No pudimos cargar el recurso. Tus favoritos guardados siguen disponibles.</p>
+      <ol class="resumen" style="text-align:left;padding-left:2.25rem">
+        <li>Revisa tu Wi-Fi o tus datos móviles.</li>
+        <li>Pulsa «Reintentar» cuando tengas señal.</li>
+      </ol>
+      <p class="error-texto" id="sigueSin" role="alert" hidden></p>
+      <div class="acciones"><a class="btn btn--secundario" href="favoritos.html">Ver mis favoritos</a><button type="button" class="btn btn--primario" id="reintentar">Reintentar</button></div>
+    </section>
+  </main>
+  <footer class="pie"><p>Biblioteca Virtual UTP · Proyecto del curso Interacción Hombre Máquina</p></footer>
+  <div id="avisos" role="status" aria-live="polite"></div>
+  <script src="js/comun.js"></script>
+  <script>
+    pintarCabecera('');
+    $('#icono').innerHTML = icono('sinwifi');
+    $('#reintentar').addEventListener('click', () => {
+      // Volvemos a la página anterior solo si es una ruta propia (evita redirecciones a sitios externos)
+      const v = new URLSearchParams(location.search).get('volver') || '/index.html';
+      const destino = /^\/[^\/\\]/.test(v) ? v : '/index.html';
+      if (navigator.onLine) location.href = destino;
+      else { const e = $('#sigueSin'); e.innerHTML = icono('alerta') + '<span>Error: todavía no hay conexión. Revisa tu señal e inténtalo de nuevo.</span>'; e.hidden = false; }
+    });
+    window.addEventListener('online', () => aviso('Volvió la conexión. Ya puedes reintentar.', 'exito'));
+  </script>
+</body>
+</html>

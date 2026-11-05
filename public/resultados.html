@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resultados · Biblioteca Virtual UTP</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Ir al contenido principal</a>
+  <header class="cabecera" id="cabecera"></header>
+  <main id="contenido" tabindex="-1">
+    <h1>Catálogo</h1>
+    <form id="formBuscar" role="search" novalidate style="margin-bottom:1.5rem">
+      <label for="q" style="font-weight:600;display:block;margin-bottom:.35rem">Buscar por título, autor o tema</label>
+      <div class="buscador">
+        <div class="buscador__caja">
+          <svg class="lupa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input id="q" type="search" autocomplete="off">
+        </div>
+        <button class="btn btn--primario" type="submit">Buscar</button>
+      </div>
+    </form>
+
+    <div class="rejilla">
+      <form class="tarjeta filtros" id="filtros" aria-label="Filtros de búsqueda">
+        <h2 style="font-size:1.25rem">Filtros</h2>
+        <fieldset>
+          <legend>Disponibilidad</legend>
+          <label class="opcion"><input type="checkbox" role="switch" id="enLinea" aria-checked="false"> Disponible en línea</label>
+        </fieldset>
+        <fieldset>
+          <legend>Formato</legend>
+          <label class="opcion"><input type="checkbox" name="formato" value="Libro"> Libro</label>
+          <label class="opcion"><input type="checkbox" name="formato" value="Artículo"> Artículo</label>
+          <label class="opcion"><input type="checkbox" name="formato" value="Revista"> Revista</label>
+        </fieldset>
+        <fieldset>
+          <legend>Facultad</legend>
+          <label class="opcion"><input type="checkbox" name="facultad" value="Negocios"> Negocios</label>
+          <label class="opcion"><input type="checkbox" name="facultad" value="Ciencias de la Salud"> Ciencias de la Salud</label>
+          <label class="opcion"><input type="checkbox" name="facultad" value="Ingeniería"> Ingeniería</label>
+        </fieldset>
+        <fieldset>
+          <legend>Año de publicación</legend>
+          <label class="opcion"><input type="checkbox" name="anio" value="2025"> 2025</label>
+          <label class="opcion"><input type="checkbox" name="anio" value="2024"> 2024</label>
+          <label class="opcion"><input type="checkbox" name="anio" value="2023"> 2023</label>
+        </fieldset>
+        <button type="button" class="btn btn--secundario" id="limpiar" style="width:100%">Quitar filtros</button>
+      </form>
+
+      <section aria-labelledby="resumen">
+        <div class="resumen-resultados"><p id="resumen" role="status" aria-live="polite" style="margin:0"></p></div>
+        <ul class="lista-resultados" id="lista"></ul>
+        <div id="vacio" hidden class="tarjeta centrada">
+          <div class="insignia insignia--error" id="vacioIcono"></div>
+          <h2 id="vacioTitulo"></h2>
+          <p class="suave">Revisa la ortografía o prueba con menos palabras. También puedes quitar los filtros aplicados.</p>
+          <p id="dijiste" hidden>¿Quisiste decir: <a href="#" id="dijisteEnlace" style="font-weight:600;color:var(--rojo)"></a>?</p>
+          <div class="acciones"><button type="button" class="btn btn--secundario" id="limpiar2">Quitar filtros</button><a class="btn btn--primario" href="index.html">Volver a buscar</a></div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer class="pie"><p>Biblioteca Virtual UTP · Proyecto del curso Interacción Hombre Máquina</p></footer>
+  <div id="avisos" role="status" aria-live="polite"></div>
+  <script src="js/comun.js"></script>
+  <script src="js/resultados.js"></script>
+</body>
+</html>

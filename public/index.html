@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inicio · Biblioteca Virtual UTP</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Ir al contenido principal</a>
+  <header class="cabecera" id="cabecera"></header>
+  <main id="contenido" tabindex="-1">
+    <section class="tarjeta tarjeta--grande" aria-labelledby="titulo">
+      <h1 id="titulo">¿Qué necesitas leer hoy?</h1>
+      <p class="suave">Más de 120 000 títulos físicos y 850 000 recursos digitales indexados.</p>
+
+      <form id="formBuscar" role="search" novalidate>
+        <label for="q" style="font-weight:600;display:block;margin-bottom:.35rem">Buscar por título, autor o tema</label>
+        <div class="buscador">
+          <div class="buscador__caja">
+            <span class="lupa-envoltura" aria-hidden="true"></span>
+            <!-- Patrón "combobox" de ARIA: el lector de pantalla anuncia la lista de sugerencias -->
+            <input id="q" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="listaSug" autocomplete="off" placeholder="Ej.: Administración Estratégica">
+            <ul id="listaSug" class="sugerencias" role="listbox" aria-label="Sugerencias de búsqueda" hidden></ul>
+          </div>
+          <button class="btn btn--primario" type="submit">Buscar</button>
+        </div>
+      </form>
+
+      <h2 class="pequeno" style="margin-top:1.5rem;font-size:1rem">Explora por facultad</h2>
+      <ul class="pildoras">
+        <li><a class="pildora" href="resultados.html?facultad=Ciencias%20de%20la%20Salud">Enfermería</a></li>
+        <li><a class="pildora" href="resultados.html?facultad=Negocios">Administración</a></li>
+        <li><a class="pildora" href="resultados.html?facultad=Ingenier%C3%ADa">Ingeniería de Sistemas</a></li>
+        <li><a class="pildora" href="resultados.html?q=metodologia">Metodología</a></li>
+      </ul>
+    </section>
+
+    <section style="margin-top:2rem" aria-labelledby="seguir">
+      <h2 id="seguir" style="font-size:1.25rem">Continúa donde lo dejaste</h2>
+      <div class="rejilla" style="grid-template-columns:1fr 260px">
+        <div id="ultimo"></div>
+        <aside class="tarjeta" aria-label="Horario de la biblioteca">
+          <h3>Horario de Biblioteca</h3>
+          <p class="suave pequeno" style="margin:0">Lun – Vie: 8:00 – 18:00</p>
+          <p class="suave pequeno" style="margin:0">Sáb: 9:00 – 13:00</p>
+        </aside>
+      </div>
+    </section>
+  </main>
+  <footer class="pie"><p>Biblioteca Virtual UTP · Proyecto del curso Interacción Hombre Máquina</p></footer>
+  <div id="avisos" role="status" aria-live="polite"></div>
+  <script src="js/comun.js"></script>
+  <script src="js/inicio.js"></script>
+</body>
+</html>

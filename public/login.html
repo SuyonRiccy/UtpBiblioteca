@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iniciar sesión · Biblioteca Virtual UTP</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <!-- Skip link: primer elemento del DOM (WCAG 2.4.1) -->
+  <a class="skip-link" href="#contenido">Ir al contenido principal</a>
+  <div class="login">
+    <header class="login__izq">
+      <img src="img/logo-utp.svg" alt="Universidad Tecnológica del Perú" width="174" height="64">
+      <h1>Tu biblioteca, a pocos clics</h1>
+      <p>Encuentra libros, artículos y revistas de la UTP desde tu laptop. Rápido y sin pasos de más.</p>
+      <img src="img/portada-negocios.svg" alt="Portada ilustrativa de un libro de la biblioteca" width="200" height="300">
+      <p class="pequeno">Sede Chiclayo · Biblioteca Virtual UTP</p>
+    </header>
+    <main id="contenido" tabindex="-1" class="login__der">
+      <form id="formLogin" novalidate>
+        <h2>Iniciar sesión</h2>
+        <p class="suave">Usa tu correo institucional de la UTP</p>
+
+        <div class="campo">
+          <label for="correo">Correo institucional</label>
+          <input id="correo" name="correo" type="email" autocomplete="username" inputmode="email" aria-describedby="correoAyuda correoErr" placeholder="u20201234@utp.edu.pe">
+          <p class="ayuda" id="correoAyuda">Ejemplo: u20201234@utp.edu.pe</p>
+          <p class="error-texto" id="correoErr" role="alert" hidden></p>
+        </div>
+
+        <div class="campo">
+          <label for="clave">Contraseña</label>
+          <div class="campo__con-boton">
+            <input id="clave" name="clave" type="password" autocomplete="current-password" aria-describedby="claveErr">
+            <!-- Botón con solo un ícono: lleva aria-label y aria-pressed (criterio 5) -->
+            <button type="button" id="verClave" aria-label="Mostrar contraseña" aria-pressed="false"></button>
+          </div>
+          <p class="error-texto" id="claveErr" role="alert" hidden></p>
+        </div>
+
+        <button class="btn btn--primario" type="submit" style="width:100%">Iniciar sesión</button>
+        <p class="ayuda" style="margin-top:1rem">¿Problemas para ingresar? Acércate a la mesa de ayuda de la Biblioteca.</p>
+      </form>
+    </main>
+  </div>
+  <div id="avisos" role="status" aria-live="polite"></div>
+  <script src="js/comun.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

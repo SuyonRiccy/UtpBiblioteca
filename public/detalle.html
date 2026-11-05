@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Detalle del recurso · Biblioteca Virtual UTP</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#contenido">Ir al contenido principal</a>
+  <header class="cabecera" id="cabecera"></header>
+  <main id="contenido" tabindex="-1">
+    <a class="btn btn--fantasma" href="resultados.html" id="volver" style="margin-bottom:.5rem">← Volver a
+      resultados</a>
+    <article class="tarjeta tarjeta--grande" id="ficha" aria-live="polite">
+      <p>Cargando…</p>
+    </article>
+
+    <!-- Visor con carga lenta (simulada) -->
+    <section id="visor" hidden aria-labelledby="visorTitulo">
+      <h2 id="visorTitulo" class="solo-lectores">Lectura en línea</h2>
+      <div class="aviso-lento" id="avisoLento">
+        <span style="color:var(--rojo);width:28px;height:28px" id="iconoLento"></span>
+        <div class="aviso-lento__texto">
+          <p style="font-weight:600;margin:0 0 .5rem" id="textoLento" role="status" aria-live="polite"></p>
+          <progress id="barra" max="100" value="0" aria-label="Progreso de carga de la vista previa"></progress>
+          <p class="ayuda" style="margin:.5rem 0 0">Puedes cancelar y volver cuando tengas mejor señal.</p>
+        </div>
+        <button class="btn btn--secundario" type="button" id="cancelarLectura">Cancelar</button>
+        <button class="btn btn--fantasma" type="button" id="verSinConexion">Ver sin conexión</button>
+      </div>
+      <div class="pagina-lectura" id="paginaLectura" hidden></div>
+    </section>
+  </main>
+  <footer class="pie">
+    <p>Biblioteca Virtual UTP · Proyecto del curso Interacción Hombre Máquina</p>
+  </footer>
+
+  <!-- Diálogo: reservar ejemplar físico (confirmación antes de una acción irreversible) -->
+  <dialog id="dlgReserva" aria-labelledby="dlgReservaTitulo">
+    <button class="dialogo__cerrar" type="button" data-cerrar aria-label="Cerrar ventana" id="xReserva"></button>
+    <div id="reservaPaso1">
+      <h2 id="dlgReservaTitulo">Reservar ejemplar físico</h2>
+      <p class="suave" id="reservaTexto"></p>
+      <form id="formReserva" novalidate>
+        <div class="campo">
+          <label for="sedeVista">Sede</label>
+          <input type="text" id="sedeVista" value="Chiclayo" readonly tabindex="-1"
+            style="background-color: var(--fondo, #f3f4f7); border: 1px solid #d1d5db; color: #142130; cursor: not-allowed; font-weight: 600;">
+          <input type="hidden" id="sede" name="sede" value="Chiclayo">
+          <p class="error-texto" id="sedeErr" role="alert" hidden></p>
+        </div>
+        <div class="dos-columnas">
+          <div class="campo"><label for="fechaRecojo">Fecha de recojo</label>
+            <input id="fechaRecojo" type="date" aria-describedby="fechaRecojoErr">
+            <p class="error-texto" id="fechaRecojoErr" role="alert" hidden></p>
+          </div>
+          <div class="campo"><label for="franja">Franja horaria</label>
+            <select id="franja" aria-describedby="franjaErr">
+              <option>08:00 – 10:00</option>
+              <option selected>10:00 – 12:00</option>
+              <option>14:00 – 16:00</option>
+            </select>
+            <p class="error-texto" id="franjaErr" role="alert" hidden></p>
+          </div>
+        </div>
+        <p class="error-texto" id="reservaErrGeneral" role="alert" hidden></p>
+        <div class="acciones"><button type="button" class="btn btn--secundario" data-cerrar>Cancelar</button><button
+            type="submit" class="btn btn--primario">Continuar</button></div>
+      </form>
+    </div>
+    <div id="reservaPaso2" hidden>
+      <h2>¿Confirmas la reserva?</h2>
+      <p class="suave">Se reservará 1 ejemplar físico a tu nombre. Si no lo recoges a tiempo, la reserva se cancela.</p>
+      <dl class="resumen" id="reservaResumen"></dl>
+      <div class="acciones"><button type="button" class="btn btn--secundario" id="volverReserva">Volver</button><button
+          type="button" class="btn btn--primario" id="confirmarReserva">Confirmar reserva</button></div>
+    </div>
+    <div id="reservaPaso3" hidden class="centrada" style="margin:0">
+      <div class="insignia insignia--exito" id="exitoReserva"></div>
+      <h2 tabindex="-1" id="tituloExito">¡Reserva confirmada!</h2>
+      <p class="suave" id="textoExito"></p>
+      <div class="acciones"><a class="btn btn--secundario" href="favoritos.html">Ver mis favoritos</a><a
+          class="btn btn--primario" href="resultados.html">Volver al catálogo</a></div>
+    </div>
+  </dialog>
+
+  <!-- Diálogo: guardar en favoritos -->
+  <dialog id="dlgFav" aria-labelledby="dlgFavTitulo">
+    <button class="dialogo__cerrar" type="button" data-cerrar aria-label="Cerrar ventana" id="xFav"></button>
+    <h2 id="dlgFavTitulo">Guardar en favoritos</h2>
+    <form id="formFav">
+      <div class="campo"><label for="carpeta">Carpeta</label><select id="carpeta"></select></div>
+      <div class="acciones"><button type="button" class="btn btn--secundario" data-cerrar>Cancelar</button><button
+          type="submit" class="btn btn--primario">Guardar</button></div>
+    </form>
+  </dialog>
+
+  <!-- Diálogo: exportar cita APA -->
+  <dialog id="dlgCita" aria-labelledby="dlgCitaTitulo">
+    <button class="dialogo__cerrar" type="button" data-cerrar aria-label="Cerrar ventana" id="xCita"></button>
+    <h2 id="dlgCitaTitulo">Exportar cita</h2>
+    <p class="suave">Formato: APA 7.ª edición</p>
+    <p class="cita" id="textoCita"></p>
+    <div class="acciones"><button type="button" class="btn btn--secundario" data-cerrar>Cerrar</button><button
+        type="button" class="btn btn--primario" id="copiarCita">Copiar al portapapeles</button></div>
+  </dialog>
+
+  <div id="avisos" role="status" aria-live="polite"></div>
+  <script src="js/comun.js"></script>
+  <script src="js/detalle.js"></script>
+</body>
+
+</html>

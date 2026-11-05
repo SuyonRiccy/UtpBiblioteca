@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Separar sala de estudio · Biblioteca Virtual UTP</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Ir al contenido principal</a>
+  <header class="cabecera" id="cabecera"></header>
+  <main id="contenido" tabindex="-1">
+    <h1>Separar una sala de estudio</h1>
+    <p class="suave">Elige cuándo y cuántas personas serán. Te mostramos las salas libres en ese horario.</p>
+
+    <!-- Banner informativo accesible cuando ya existe una reserva activa -->
+    <div id="avisoYaTieneReserva" class="tarjeta" role="alert" aria-live="assertive" hidden style="background:#fff3cd;border-left:4px solid #ffc107;color:#664d03;padding:1rem;margin-bottom:1.5rem"></div>
+
+    <form class="tarjeta" id="formSala" novalidate>
+      <div class="dos-columnas">
+        <div class="campo"><label for="fecha">Fecha</label>
+          <input id="fecha" type="date" aria-describedby="fechaAyuda fechaErr"><p class="ayuda" id="fechaAyuda">Atendemos de lunes a sábado.</p><p class="error-texto" id="fechaErr" role="alert" hidden></p></div>
+        <div class="campo"><label for="hora">Hora de inicio</label>
+          <input id="hora" type="time" min="08:00" max="17:00" step="1800" value="10:00" aria-describedby="horaAyuda horaErr"><p class="ayuda" id="horaAyuda">Entre 08:00 y 17:00.</p><p class="error-texto" id="horaErr" role="alert" hidden></p></div>
+        <div class="campo"><label for="duracion">Duración</label>
+          <select id="duracion" aria-describedby="duracionErr"><option value="1">1 hora</option><option value="2">2 horas</option><option value="3">3 horas</option></select><p class="error-texto" id="duracionErr" role="alert" hidden></p></div>
+        <div class="campo"><label for="personas">Número de personas</label>
+          <input id="personas" type="number" min="2" max="10" value="4" inputmode="numeric" aria-describedby="personasAyuda personasErr"><p class="ayuda" id="personasAyuda">De 2 a 10 personas.</p><p class="error-texto" id="personasErr" role="alert" hidden></p></div>
+      </div>
+      <button class="btn btn--primario" type="submit">Buscar salas libres</button>
+    </form>
+
+    <section aria-labelledby="tituloResultado" style="margin-top:2rem">
+      <h2 id="tituloResultado" style="font-size:1.25rem">Salas</h2>
+      <p id="estadoSalas" role="status" aria-live="polite" class="suave">Completa los datos y pulsa «Buscar salas libres».</p>
+      <ul class="salas-lista" id="listaSalas"></ul>
+    </section>
+  </main>
+  <footer class="pie"><p>Biblioteca Virtual UTP · Proyecto del curso Interacción Hombre Máquina</p></footer>
+
+  <dialog id="dlgSala" aria-labelledby="dlgSalaTitulo">
+    <button class="dialogo__cerrar" type="button" data-cerrar aria-label="Cerrar ventana" id="xSala"></button>
+    <div id="salaPaso1">
+      <div class="insignia insignia--error" id="iconoSala" style="width:56px;height:56px;margin:0"></div>
+      <h2 id="dlgSalaTitulo">¿Confirmas la reserva de la sala?</h2>
+      <p class="suave">La reserva queda a tu nombre. Si no llegas en los primeros 15 minutos, la sala se libera.</p>
+      <dl class="resumen" id="salaResumen"></dl>
+      <p class="error-texto" id="salaErr" role="alert" hidden></p>
+      <div class="acciones"><button type="button" class="btn btn--secundario" data-cerrar>Cancelar</button><button type="button" class="btn btn--primario" id="confirmarSala">Confirmar reserva</button></div>
+    </div>
+    <div id="salaPaso2" hidden class="centrada" style="margin:0">
+      <div class="insignia insignia--exito" id="exitoSala"></div>
+      <h2 id="tituloExitoSala" tabindex="-1">¡Sala reservada!</h2>
+      <p class="suave" id="textoExitoSala"></p>
+      <div class="acciones"><button type="button" class="btn btn--primario" data-cerrar>Listo</button></div>
+    </div>
+  </dialog>
+  <div id="avisos" role="status" aria-live="polite"></div>
+  <script src="js/comun.js"></script>
+  <script src="js/salas.js"></script>
+</body>
+</html>

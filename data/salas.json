@@ -1,0 +1,6 @@
+[
+  {"id":1,"nombre":"Sala 1","capacidad":4,"equipamiento":"Pizarra acrílica"},
+  {"id":2,"nombre":"Sala 2","capacidad":6,"equipamiento":"Pizarra y TV"},
+  {"id":3,"nombre":"Sala 3","capacidad":8,"equipamiento":"Pizarra, TV y toma de corriente"},
+  {"id":4,"nombre":"Sala 4","capacidad":10,"equipamiento":"Proyector y pizarra"}
+]

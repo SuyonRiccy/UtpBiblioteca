@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mis favoritos · Biblioteca Virtual UTP</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <style>
+    /* Estilos de soporte para el botón de eliminar alineado a accesibilidad (área >= 44x44px) */
+    .item-fav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+    }
+    .acciones-fav {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
+    }
+    .btn--eliminar {
+      background: transparent;
+      color: var(--rojo, #c8102e);
+      border: 1px solid #d1d5db;
+      padding: 0.5rem 0.85rem;
+      min-height: 44px;
+      min-width: 44px;
+      font-size: 0.875rem;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn--eliminar:hover, .btn--eliminar:focus-visible {
+      background: #fee2e2;
+      border-color: var(--rojo, #c8102e);
+      outline: 2px solid var(--rojo, #c8102e);
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Ir al contenido principal</a>
+  <header class="cabecera" id="cabecera"></header>
+  <main id="contenido" tabindex="-1">
+    <h1>Mis favoritos</h1>
+    <p class="suave">Organiza tus lecturas por asignatura</p>
+    <div class="rejilla">
+      <nav class="tarjeta" aria-label="Carpetas de favoritos">
+        <h2 style="font-size:1.25rem">Carpetas</h2>
+        <ul class="carpetas" id="carpetas"></ul>
+        <button class="btn btn--secundario" type="button" id="nuevaCarpeta" style="width:100%;min-height:44px">Nueva carpeta</button>
+      </nav>
+      <section aria-labelledby="tituloCarpeta">
+        <h2 id="tituloCarpeta" style="font-size:1rem" role="status" aria-live="polite"></h2>
+        <ul class="lista-resultados" id="listaFav"></ul>
+        <p id="vacioFav" hidden class="tarjeta">Todavía no guardaste recursos en esta carpeta. Busca un libro y pulsa «Guardar en Favoritos».</p>
+      </section>
+    </div>
+  </main>
+  <footer class="pie"><p>Biblioteca Virtual UTP · Proyecto del curso Interacción Hombre Máquina</p></footer>
+
+  <!-- Diálogo: Crear nueva carpeta con validaciones -->
+  <dialog id="dlgCarpeta" aria-labelledby="dlgCarpetaTitulo">
+    <button class="dialogo__cerrar" type="button" data-cerrar aria-label="Cerrar ventana" id="xCarpeta"></button>
+    <h2 id="dlgCarpetaTitulo">Nueva carpeta</h2>
+    <form id="formCarpeta" novalidate>
+      <div class="campo">
+        <label for="nombreCarpeta">Nombre de la carpeta</label>
+        <input 
+          id="nombreCarpeta" 
+          type="text" 
+          maxlength="30" 
+          autocomplete="off" 
+          aria-describedby="nombreCarpetaAyuda nombreCarpetaErr"
+          placeholder="Ej. Administración Estratégica"
+        >
+        <p class="ayuda" id="nombreCarpetaAyuda">Entre 3 y 30 caracteres. Por ejemplo, el nombre de tu asignatura.</p>
+        <p class="error-texto" id="nombreCarpetaErr" role="alert" hidden></p>
+      </div>
+      <div class="acciones">
+        <button type="button" class="btn btn--secundario" data-cerrar style="min-height:44px">Cancelar</button>
+        <button type="submit" class="btn btn--primario" style="min-height:44px">Crear carpeta</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Diálogo: Confirmar eliminación de recurso de favoritos (Prevención de errores de Norman/Nielsen) -->
+  <dialog id="dlgEliminarFav" aria-labelledby="dlgEliminarFavTitulo">
+    <button class="dialogo__cerrar" type="button" data-cerrar aria-label="Cerrar ventana" id="xEliminarFav"></button>
+    <h2 id="dlgEliminarFavTitulo">¿Quitar de favoritos?</h2>
+    <p class="suave" id="textoConfirmarEliminar">El recurso dejará de estar organizado en tus carpetas guardadas.</p>
+    <div class="acciones">
+      <button type="button" class="btn btn--secundario" data-cerrar style="min-height:44px">Conservar</button>
+      <button type="button" class="btn btn--primario" id="btnConfirmarQuitar" style="background:var(--rojo, #c8102e);border-color:var(--rojo, #c8102e);min-height:44px">Quitar recurso</button>
+    </div>
+  </dialog>
+
+  <div id="avisos" role="status" aria-live="polite"></div>
+  <script src="js/comun.js"></script>
+  <script src="js/favoritos.js"></script>
+</body>
+</html>
