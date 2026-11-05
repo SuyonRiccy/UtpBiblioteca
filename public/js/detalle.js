@@ -84,7 +84,7 @@ $('#volverReserva').addEventListener('click', () => paso(1));
 $('#confirmarReserva').addEventListener('click', async () => {
   try {
     const r = await api('/api/reservas', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tipo: 'libro', libroId: libro.id, sede: $('#sede').value, fecha: $('#fechaRecojo').value, franja: $('#franja').value }) });
+      body: JSON.stringify({ tipo: 'libro', usuario: usuario(), libroId: libro.id, sede: $('#sede').value, fecha: $('#fechaRecojo').value, franja: $('#franja').value }) });
     $('#textoExito').textContent = `Recoge tu ejemplar en la sede ${r.sede} el ${fechaLarga(r.fecha)}, entre las ${r.franja.replace(' – ', ' y las ')}.`;
     paso(3); $('#tituloExito').focus();
   } catch (e) {                                                  // el servidor explica qué pasó y cómo solucionarlo

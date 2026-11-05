@@ -40,6 +40,7 @@ p { margin: 0 0 1rem; }
 /* ---------- Cabecera y navegación ---------- */
 .cabecera { background: var(--azul); border-bottom: 4px solid var(--rojo); }
 .cabecera__fila { max-width: 1200px; margin: 0 auto; padding: .75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.cabecera .logo-utp { width: 180px; height: auto; object-fit: contain; }
 .cabecera nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
 .cabecera a.nav-enlace, .cabecera button.nav-enlace { display: inline-flex; align-items: center; min-height: 48px; padding: 0 1rem; border-radius: 8px; color: #fff; text-decoration: none; font: inherit; background: none; border: 0; cursor: pointer; }
 .cabecera a.nav-enlace:hover, .cabecera button.nav-enlace:hover { background: rgba(255,255,255,.16); }
@@ -91,6 +92,7 @@ main:focus { outline: none; }
 /* ---------- Portada de login ---------- */
 .login { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
 .login__izq { background: var(--azul); color: #fff; padding: 5rem 4rem; border-right: 8px solid var(--rojo); display: flex; flex-direction: column; gap: 1.5rem; }
+.login__izq .logo-utp-login { width: 250px; height: auto; object-fit: contain; }
 .login__izq p { color: #fff; max-width: 32rem; }
 .login__der { background: var(--blanco); padding: 5rem 4rem; display: flex; align-items: center; }
 .login__der form { width: 100%; max-width: 440px; }

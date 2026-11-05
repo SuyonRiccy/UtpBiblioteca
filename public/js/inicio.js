@@ -3,7 +3,7 @@ pintarCabecera('inicio');
 $('.lupa-envoltura').outerHTML = icono('lupa').replace('<svg', '<svg class="lupa"');
 
 const q = $('#q'), lista = $('#listaSug');
-let sugerencias = [], activo = -1, espera;
+let sugerencias = [], activo = -1, espera, solicitud = 0;
 
 const irA = (texto) => { location.href = 'resultados.html?q=' + encodeURIComponent(texto); };
 function cerrarLista() { lista.hidden = true; q.setAttribute('aria-expanded', 'false'); q.removeAttribute('aria-activedescendant'); activo = -1; }
@@ -25,9 +25,16 @@ function pintarLista() {
 // Pide sugerencias al servidor 200 ms después de dejar de escribir
 q.addEventListener('input', () => {
   clearTimeout(espera);
-  if (q.value.trim().length < 2) { sugerencias = []; cerrarLista(); return; }
+  const turno = ++solicitud;
+  sugerencias = [];
+  cerrarLista();
+  if (q.value.trim().length < 2) return;
   espera = setTimeout(async () => {
-    try { sugerencias = await api('/api/sugerencias?q=' + encodeURIComponent(q.value)); activo = -1; pintarLista(); } catch (e) { cerrarLista(); }
+    try {
+      const nuevas = await api('/api/sugerencias?q=' + encodeURIComponent(q.value));
+      if (turno !== solicitud) return;
+      sugerencias = nuevas; activo = -1; pintarLista();
+    } catch (e) { if (turno === solicitud) cerrarLista(); }
   }, 200);
 });
 
@@ -35,6 +42,8 @@ q.addEventListener('input', () => {
 q.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowDown' && sugerencias.length) { e.preventDefault(); activo = (activo + 1) % sugerencias.length; pintarLista(); }
   else if (e.key === 'ArrowUp' && sugerencias.length) { e.preventDefault(); activo = (activo - 1 + sugerencias.length) % sugerencias.length; pintarLista(); }
+  else if (e.key === 'Home' && sugerencias.length && !lista.hidden) { e.preventDefault(); activo = 0; pintarLista(); }
+  else if (e.key === 'End' && sugerencias.length && !lista.hidden) { e.preventDefault(); activo = sugerencias.length - 1; pintarLista(); }
   else if (e.key === 'Escape') cerrarLista();
   else if (e.key === 'Enter' && sugerencias.length && !lista.hidden) {
     e.preventDefault();                                   // mejora del PA1: Enter abre la sugerencia (la primera si no elegiste otra)

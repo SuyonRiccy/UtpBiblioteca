@@ -7,33 +7,35 @@
   <link rel="stylesheet" href="css/estilos.css">
   <style>
     /* Estilos de soporte para el botón de eliminar alineado a accesibilidad (área >= 44x44px) */
-    .item-fav {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+    .recurso__acciones {
+      display: contents;
+    }
+    #listaFav .recurso {
       position: relative;
     }
-    .acciones-fav {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: -0.5rem;
-      margin-bottom: 1rem;
+    #listaFav .recurso__texto {
+      padding-right: 2.5rem;
+    }
+    #listaFav .btn--eliminar {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
     }
     .btn--eliminar {
       background: transparent;
       color: var(--rojo, #c8102e);
       border: 1px solid #d1d5db;
-      padding: 0.5rem 0.85rem;
+      padding: 0;
       min-height: 44px;
+      width: 44px;
       min-width: 44px;
-      font-size: 0.875rem;
       border-radius: 6px;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
+      display: inline-grid;
+      place-items: center;
       transition: background 0.2s, border-color 0.2s;
     }
+    .btn--eliminar svg { width: 20px; height: 20px; }
     .btn--eliminar:hover, .btn--eliminar:focus-visible {
       background: #fee2e2;
       border-color: var(--rojo, #c8102e);
@@ -54,13 +56,13 @@
         <button class="btn btn--secundario" type="button" id="nuevaCarpeta" style="width:100%;min-height:44px">Nueva carpeta</button>
       </nav>
       <section aria-labelledby="tituloCarpeta">
-        <h2 id="tituloCarpeta" style="font-size:1rem" role="status" aria-live="polite"></h2>
+        <h2 id="tituloCarpeta" tabindex="-1" style="font-size:1rem" role="status" aria-live="polite"></h2>
         <ul class="lista-resultados" id="listaFav"></ul>
         <p id="vacioFav" hidden class="tarjeta">Todavía no guardaste recursos en esta carpeta. Busca un libro y pulsa «Guardar en Favoritos».</p>
       </section>
     </div>
   </main>
-  <footer class="pie"><p>Biblioteca Virtual UTP · Proyecto del curso Interacción Hombre Máquina</p></footer>
+  <footer class="pie"><p>Biblioteca Virtual UTP</p></footer>
 
   <!-- Diálogo: Crear nueva carpeta con validaciones -->
   <dialog id="dlgCarpeta" aria-labelledby="dlgCarpetaTitulo">

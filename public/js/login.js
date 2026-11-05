@@ -19,7 +19,7 @@ $('#formLogin').addEventListener('submit', (e) => {
   else if (!/^[^\s@]+@utp\.edu\.pe$/i.test(v)) { ponerError(correo, 'Usa tu correo institucional, que termina en @utp.edu.pe.'); primero = correo; }
   if (clave.value.length < 6) { ponerError(clave, 'Escribe tu contraseña (mínimo 6 caracteres).'); primero = primero || clave; }
   if (primero) { primero.focus(); return; }          // el foco va al primer campo con error
-  localStorage.setItem('usuario', v);
+  localStorage.setItem('usuario', v.toLowerCase());
   location.href = 'index.html';
 });
 if (usuario()) location.href = 'index.html';

@@ -16,17 +16,11 @@ let reservaActiva = null;
 // Verifica si el usuario ya cuenta con una sala reservada previamente
 async function verificarReservaPrevia() {
   try {
-    const lista = await api('/api/reservas');
-    // Filtra reservas de tipo sala que sigan vigentes
-    reservaActiva = Array.isArray(lista) ? lista.find((r) => r.tipo === 'sala') : null;
+    const lista = await api('/api/reservas?' + new URLSearchParams({ tipo: 'sala', usuario: usuario() || '' }));
+    reservaActiva = Array.isArray(lista) ? lista[0] || null : null;
   } catch (e) {
-    // Si la API no retorna lista directa, revisa respaldo en almacenamiento local
-    try {
-      const locales = JSON.parse(localStorage.getItem('reservas') || '[]');
-      reservaActiva = locales.find((r) => r.tipo === 'sala');
-    } catch (_) {
-      reservaActiva = null;
-    }
+    reservaActiva = null;
+    aviso(e.message || 'No pudimos comprobar tus reservas. Inténtalo de nuevo.', 'error');
   }
   actualizarEstadoBloqueo();
 }
@@ -77,12 +71,14 @@ $('#formSala').addEventListener('submit', async (e) => {
   }
 
   campos.forEach(quitarError);
+  $('#listaSalas').innerHTML = '';
+  $('#estadoSalas').textContent = 'Buscando salas disponibles…';
   const d = datos();
   try {
     const r = await api('/api/salas?' + new URLSearchParams(d));
     ultima = { ...d, horario: r.horario };
     const libres = r.salas.filter((s) => s.disponible).length;
-    $('#estadoSalas').textContent = libres 
+    $('#estadoSalas').textContent = libres
       ? `${libres} de ${r.salas.length} salas libres el ${fechaLarga(d.fecha)}, de ${r.horario}.` 
       : `No hay salas libres el ${fechaLarga(d.fecha)} de ${r.horario}. Prueba con otra hora o menos personas.`;
 
@@ -133,7 +129,7 @@ const datosReserva = () => ({
 
 $('#confirmarSala').addEventListener('click', async () => {
   try {
-    const payload = { tipo: 'sala', salaId: salaElegida.id, sala: salaElegida.nombre, ...datosReserva() };
+    const payload = { tipo: 'sala', usuario: usuario(), salaId: salaElegida.id, sala: salaElegida.nombre, ...datosReserva() };
     const r = await api('/api/reservas', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -151,6 +147,10 @@ $('#confirmarSala').addEventListener('click', async () => {
     const g = $('#salaErr');
     g.innerHTML = icono('alerta') + '<span>Error: ' + esc(err.message) + '</span>';
     g.hidden = false;
+    if (err.estado === 409) {
+      $('#dlgSala').close();
+      await verificarReservaPrevia();
+    }
   }
 });
 

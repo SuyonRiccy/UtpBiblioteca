@@ -53,7 +53,12 @@ function horarioDe(fecha) {
 const aMinutos = (hhmm) => { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; };
 const aHora = (min) => String(Math.floor(min / 60)).padStart(2, '0') + ':' + String(min % 60).padStart(2, '0');
 const hoy = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
-const fechaValida = (f) => /^\d{4}-\d{2}-\d{2}$/.test(f || '') && !isNaN(new Date(f + 'T00:00:00'));
+const fechaValida = (f) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(f || '')) return false;
+  const [anio, mes, dia] = f.split('-').map(Number);
+  const fecha = new Date(Date.UTC(anio, mes - 1, dia));
+  return fecha.getUTCFullYear() === anio && fecha.getUTCMonth() === mes - 1 && fecha.getUTCDate() === dia;
+};
 
 // Devuelve un error con texto explicativo (no solo "inválido") y el campo afectado
 const error = (res, estado, mensaje, campo) => res.status(estado).json({ error: mensaje, campo });
@@ -71,12 +76,18 @@ app.get('/api/sugerencias', (req, res) => {
 app.get('/api/libros', (req, res) => {
   const { q, formato, facultad, anio, enLinea } = req.query;
   const lista = (v) => (v ? String(v).split(',') : []);   // "Libro,Revista" -> ["Libro","Revista"]
-  const formatos = lista(formato), facultades = lista(facultad), anios = lista(anio).map(Number);
+  const formatos = lista(formato), facultades = lista(facultad);
+  const rangosAnio = lista(anio).map((valor) => {
+    const rango = valor.match(/^(\d{4})-(\d{4})$/);
+    if (rango) return { desde: Number(rango[1]), hasta: Number(rango[2]) };
+    const exacto = Number(valor);
+    return Number.isInteger(exacto) ? { desde: exacto, hasta: exacto } : null;
+  }).filter(Boolean);
   let libros = leer('libros.json');
   if (q) { const n = norm(q); libros = libros.filter((l) => norm(l.titulo + ' ' + l.autores + ' ' + l.facultad).includes(n)); }
   if (formatos.length) libros = libros.filter((l) => formatos.includes(l.formato));
   if (facultades.length) libros = libros.filter((l) => facultades.includes(l.facultad));
-  if (anios.length) libros = libros.filter((l) => anios.includes(l.anio));
+  if (rangosAnio.length) libros = libros.filter((l) => rangosAnio.some(({ desde, hasta }) => l.anio >= desde && l.anio <= hasta));
   if (enLinea === 'true') libros = libros.filter((l) => l.enLinea);
   res.json({ total: libros.length, libros, sugerencia: libros.length ? null : sugerenciaPara(q) });
 });
@@ -102,7 +113,7 @@ function validarSala({ fecha, hora, duracion, personas }) {
   if (fecha < hoy()) return { error: 'La fecha ya pasó. Elige hoy o un día posterior.', campo: 'fecha' };
   const horario = horarioDe(fecha);
   if (!horario) return { error: 'La biblioteca está cerrada los domingos. Elige otro día.', campo: 'fecha' };
-  if (!/^\d{2}:\d{2}$/.test(hora || '')) return { error: 'Elige la hora de inicio.', campo: 'hora' };
+  if (!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(hora || '')) return { error: 'Elige una hora válida de inicio.', campo: 'hora' };
   const dur = Number(duracion);
   if (![1, 2, 3].includes(dur)) return { error: 'Elige una duración de 1, 2 o 3 horas.', campo: 'duracion' };
   const n = Number(personas);
@@ -130,9 +141,23 @@ app.get('/api/salas', (req, res) => {
 const SEDES = ['Chiclayo', 'Trujillo'];
 const FRANJAS = ['08:00 – 10:00', '10:00 – 12:00', '14:00 – 16:00'];
 
+// La sesión del prototipo se identifica por el correo guardado en el navegador.
+// No sustituye autenticación real, pero permite separar las reservas de cada demo.
+app.get('/api/reservas', (req, res) => {
+  const correo = String(req.query.usuario || '').trim().toLowerCase();
+  if (!correo) return error(res, 400, 'Inicia sesión para consultar tus reservas.');
+  const tipo = req.query.tipo;
+  const reservas = leer('reservas.json').filter((r) =>
+    r.usuario === correo && (!tipo || r.tipo === tipo) && (!r.fecha || r.fecha >= hoy())
+  );
+  res.json(reservas);
+});
+
 app.post('/api/reservas', (req, res) => {
   const b = req.body || {};
   const reservas = leer('reservas.json');
+  const correo = String(b.usuario || '').trim().toLowerCase();
+  if (!/^[^\s@]+@utp\.edu\.pe$/i.test(correo)) return error(res, 400, 'Inicia sesión con tu correo institucional.');
 
   if (b.tipo === 'libro') {
     const libro = leer('libros.json').find((l) => l.id === Number(b.libroId));
@@ -144,7 +169,7 @@ app.post('/api/reservas', (req, res) => {
     if (!FRANJAS.includes(b.franja)) return error(res, 400, 'Elige una franja horaria.', 'franja');
     const usados = reservas.filter((r) => r.tipo === 'libro' && r.libroId === libro.id).length;
     if (usados >= libro.ejemplares) return error(res, 409, 'No quedan ejemplares disponibles. Prueba leerlo en línea o elige otro recurso.');
-    const nueva = { id: Date.now(), tipo: 'libro', libroId: libro.id, titulo: libro.titulo, sede: b.sede, fecha: b.fecha, franja: b.franja };
+    const nueva = { id: Date.now(), tipo: 'libro', usuario: correo, libroId: libro.id, titulo: libro.titulo, sede: b.sede, fecha: b.fecha, franja: b.franja };
     reservas.push(nueva); guardar('reservas.json', reservas);
     return res.status(201).json(nueva);
   }
@@ -154,10 +179,12 @@ app.post('/api/reservas', (req, res) => {
     if (!sala) return error(res, 404, 'No encontramos esa sala.');
     const v = validarSala(b);
     if (v.error) return error(res, 400, v.error, v.campo);
+    const yaTieneSala = reservas.some((r) => r.tipo === 'sala' && r.usuario === correo && r.fecha >= hoy());
+    if (yaTieneSala) return error(res, 409, 'Ya tienes una reserva de sala vigente. Completa la reserva anterior antes de solicitar otra.');
     if (sala.capacidad < v.n) return error(res, 400, `${sala.nombre} tiene capacidad para ${sala.capacidad} personas. Elige una sala más grande.`, 'personas');
     if (salaOcupada(sala.id, b.fecha, v.ini, v.fin))
       return error(res, 409, `${sala.nombre} ya fue reservada en ese horario. Elige otra sala o cambia la hora.`);
-    const nueva = { id: Date.now(), tipo: 'sala', salaId: sala.id, sala: sala.nombre, fecha: b.fecha, hora: aHora(v.ini), ini: v.ini, fin: v.fin, personas: v.n };
+    const nueva = { id: Date.now(), tipo: 'sala', usuario: correo, salaId: sala.id, sala: sala.nombre, fecha: b.fecha, hora: aHora(v.ini), ini: v.ini, fin: v.fin, personas: v.n };
     reservas.push(nueva); guardar('reservas.json', reservas);
     return res.status(201).json(nueva);
   }

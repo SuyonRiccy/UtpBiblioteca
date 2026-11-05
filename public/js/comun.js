@@ -19,6 +19,7 @@ const ICONOS = {
   info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
   descarga: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>',
   carpeta: '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+  papelera: '<path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6"/>',
   cerrar: '<path d="M18 6L6 18M6 6l12 12"/>',
   ojo: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
   sinwifi: '<path d="M1 1l22 22"/><path d="M16.7 11.1A11 11 0 0 1 21 13.6"/><path d="M5 12.9a11 11 0 0 1 5.2-2.8"/><path d="M8.5 16.4a6 6 0 0 1 7 0"/><path d="M12 20h.01"/>',
@@ -34,7 +35,7 @@ function requerirSesion() { if (!usuario()) location.href = 'login.html'; }
 function pintarCabecera(activo) {
   const items = [['inicio', 'Inicio', 'index.html'], ['catalogo', 'Catálogo', 'resultados.html'], ['salas', 'Salas', 'salas.html'], ['favoritos', 'Favoritos', 'favoritos.html']];
   $('#cabecera').innerHTML = `<div class="cabecera__fila">
-    <a href="index.html"><img src="img/logo-utp.svg" alt="Universidad Tecnológica del Perú, Biblioteca Virtual. Ir al inicio" width="120" height="44"></a>
+    <a href="index.html"><img class="logo-utp" src="img/logo-utp.png" alt="Universidad Tecnológica del Perú, Biblioteca Virtual. Ir al inicio" width="180" height="40"></a>
     <nav aria-label="Principal"><ul>
       ${items.map(([id, txt, url]) => `<li><a class="nav-enlace" href="${url}"${id === activo ? ' aria-current="page"' : ''}>${txt}</a></li>`).join('')}
       <li><button type="button" class="nav-enlace salir" id="btnSalir">Cerrar sesión</button></li>
@@ -103,7 +104,7 @@ function citaApa(l) {
 }
 
 // ---------- Tarjeta de recurso (componente reutilizado en inicio, resultados y favoritos) ----------
-function tarjetaRecurso(l) {
+function tarjetaRecurso(l, conPapelera = false) {
   return `<article class="recurso">
     <img src="img/${l.portada}" alt="Portada de ${esc(l.titulo)}" width="92" height="128">
     <div class="recurso__texto">
@@ -111,7 +112,10 @@ function tarjetaRecurso(l) {
       <p class="suave pequeno">${esc(l.autores)} | ${esc(l.editorial)}, ${l.anio}</p>
       <div class="chips"><span class="chip">${esc(l.formato)}</span>${l.enLinea ? '<span class="chip chip--ok">Disponible en línea</span>' : ''}${l.fisico ? '<span class="chip">Sede Chiclayo</span>' : ''}</div>
     </div>
-    <a class="btn btn--secundario" href="detalle.html?id=${l.id}" aria-label="Ver detalle de ${esc(l.titulo)}">Ver detalle</a>
+    <div class="recurso__acciones">
+      ${conPapelera ? `<button type="button" class="btn--eliminar" data-quitar-fav="${l.id}" aria-label="Quitar ${esc(l.titulo)} de favoritos" title="Quitar de favoritos">${icono('papelera')}</button>` : ''}
+      <a class="btn btn--secundario" href="detalle.html?id=${l.id}" aria-label="Ver detalle de ${esc(l.titulo)}">Ver detalle</a>
+    </div>
   </article>`;
 }
 
